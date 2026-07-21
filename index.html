@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPulse — Engineering & UI Architecture Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-brand" id="brand-logo">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-name">Dev<span class="brand-accent"> Engima</span></span>
+        </div>
+        <nav class="nav-links">
+            <button class="nav-btn active" data-target="home">Feed</button>
+            <button class="nav-btn" id="filter-bookmarks-btn">🔖 Saved</button>
+            <button class="nav-btn" data-target="create">+ Write Article</button>
+            <button class="nav-btn admin-badge" data-target="admin">Admin Portal</button>
+            <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle Theme">🌙 Dark</button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+
+        <!-- VIEW 1: HOME BLOG FEED & SEARCH -->
+        <section id="home-view" class="view-panel">
+            <header class="view-header">
+                <span class="hero-badge">🚀 Platform Insights</span>
+                <h1>Engineering & Design Insights</h1>
+                <p>Discover deep-dive breakdowns on system architecture, high-frequency backend networks, and UI design workflows.</p>
+            </header>
+
+            <div class="toolbar-card">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search by title, tag, or keyword...">
+                </div>
+                <div class="filter-group">
+                    <select id="category-filter">
+                        <option value="ALL">All Categories</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Design">Design</option>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Telecom">Telecom NOC</option>
+                        <option value="Career">Career</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic Posts Grid -->
+            <div id="posts-container" class="posts-grid"></div>
+        </section>
+
+        <!-- VIEW 2: POST READER & COMMENT SECTION -->
+        <section id="reader-view" class="view-panel hidden">
+            <div class="reader-toolbar">
+                <button id="back-to-feed-btn" class="btn-secondary back-btn">← Back to Feed</button>
+                <div class="reader-actions">
+                    <button class="btn-action" id="like-article-btn">❤️ <span id="article-likes-count">0</span> Likes</button>
+                    <button class="btn-action" id="bookmark-article-btn">🔖 Bookmark</button>
+                    <button class="btn-action" id="share-article-btn">🔗 Share</button>
+                </div>
+            </div>
+
+            <article id="article-view" class="article-wrapper"></article>
+
+            <section class="comments-section">
+                <h3>Discussion (<span id="comment-count">0</span>)</h3>
+                <div id="comments-list" class="comments-list"></div>
+
+                <form id="comment-form" class="comment-form">
+                    <h4>Join the conversation</h4>
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <input type="text" id="comment-author" placeholder="Your Name or Handle" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="comment-text" placeholder="Share your perspective or ask a technical question..." rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Submit Comment</button>
+                </form>
+            </section>
+        </section>
+
+        <!-- VIEW 3: RICH TEXT EDITOR / POST CREATOR -->
+        <section id="create-view" class="view-panel hidden">
+            <header class="view-header">
+                <h2>Publish New Article</h2>
+                <p>Share technical benchmarks, architecture diagrams, or UI components with the team.</p>
+            </header>
+
+            <form id="create-post-form" class="editor-card">
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label for="post-title">Article Title</label>
+                        <input type="text" id="post-title" placeholder="e.g. Benchmarking Redis vs Memcached under High Concurrency" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="post-category">Category</label>
+                        <select id="post-category" required>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Design">Design</option>
+                            <option value="Architecture">Architecture</option>
+                            <option value="Telecom">Telecom NOC</option>
+                            <option value="Career">Career</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="post-tags">Tags (Comma-separated)</label>
+                        <input type="text" id="post-tags" placeholder="node, backend, performance">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="post-image-file">Cover Image Upload</label>
+                        <input type="file" id="post-image-file" accept="image/*">
+                    </div>
+                </div>
+
+                <div id="image-preview-wrapper" class="image-preview-wrapper hidden">
+                    <img id="image-preview" src="" alt="Cover Preview">
+                    <button type="button" id="remove-img-btn" class="btn-danger-sm">Remove Image</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Article Content</label>
+                    <div class="editor-toolbar">
+                        <button type="button" data-cmd="bold"><b>B</b></button>
+                        <button type="button" data-cmd="italic"><i>I</i></button>
+                        <button type="button" data-cmd="underline"><u>U</u></button>
+                        <button type="button" data-cmd="formatBlock" data-value="h2">H2</button>
+                        <button type="button" data-cmd="formatBlock" data-value="h3">H3</button>
+                        <button type="button" data-cmd="formatBlock" data-value="blockquote">“ ”</button>
+                        <button type="button" data-cmd="insertUnorderedList">• List</button>
+                    </div>
+                    <div id="rich-editor" class="rich-editor" contenteditable="true" data-placeholder="Start typing your technical article here..."></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancel-create-btn" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Publish Article</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- VIEW 4: PROTECTED ADMIN PANEL -->
+        <section id="admin-view" class="view-panel hidden">
+            <div id="admin-auth-card" class="auth-card">
+                <h2>Admin Authentication</h2>
+                <p>Enter administrative credentials to access moderation tools.</p>
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-pass">Passcode (Default: <code>admin123</code>)</label>
+                        <input type="password" id="admin-pass" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Unlock Dashboard</button>
+                </form>
+            </div>
+
+            <div id="admin-dashboard" class="dashboard-content hidden">
+                <div class="dashboard-header">
+                    <div>
+                        <h2>Admin Control Center</h2>
+                        <p>Manage database entries, purge comments, and inspect real-time post metrics.</p>
+                    </div>
+                    <button id="admin-logout-btn" class="btn-secondary">Lock Panel</button>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-value" id="stat-total-posts">0</span>
+                        <span class="metric-label">Total Articles</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="stat-total-comments">0</span>
+                        <span class="metric-label">User Comments</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="stat-total-categories">0</span>
+                        <span class="metric-label">Active Categories</span>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <h3>Article Management Table</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Likes</th>
+                                <th>Comments</th>
+                                <th>Date Published</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
